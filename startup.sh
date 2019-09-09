@@ -102,9 +102,9 @@ for xconf in ${CONFDIR}/*.conf; do
     chown -R $WORK_UID.$WORK_GID $LOCALDIR
     chmod -R u+rw $LOCALDIR
 done
-RUN=1
+STOP=""
 # main loop
-while test -z "${RUN}"
+while test -z "${STOP}"
 do
     for cconf in ${LOGDIR}/*.gconf; do
         . $cconf
@@ -124,7 +124,6 @@ do
         su $WORK_USER -c "/usr/bin/nextcloudcmd --non-interactive --exclude $LOCALDIR/exclude.lst $PARAMS $SILENT -n $H $LOCALDIR $URL &> ${LOGDIR}/${CONF}_sync.log"
         # ToDo: search for special tools for fixing permissons
         test "$POST_SCRIPT" && test -f $LOCALDIR/$POST_SCRIPT && su $WORK_USER -c "/bin/sh $LOCALDIR/$POST_SCRIPT 2>&1 >> ${LOGDIR}/${CONF}_sync.log"
-        sleep $INTERVAL
+        test -z "${RUNONCE}" && sleep $INTERVAL || STOP=1
     done
-    test -z "${RUNONCE}" || RUN=""
 done
