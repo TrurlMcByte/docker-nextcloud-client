@@ -11,18 +11,19 @@ DEFPARAMSTRING="--max-sync-retries 20 --trust"
 
 if test ! "${CONFDIR}"; then
     CONFDIR=/conf
+    SERVER=`echo $URL|sed "s/\// /g"|awk '{ print $2 }'`
     mkdir -p "${CONFDIR}"
     echo "# generated" > "${CONFDIR}/00.conf"
-    echo SERVER=`echo $URL|sed "s/\// /g"|awk '{ print $2 }'` >> "${CONFDIR}/00.conf"
-    echo WORK_UID=${WORK_UID:-82} >> "${CONFDIR}/00.conf"
-    echo WORK_GID=${WORK_GID:-82} >> "${CONFDIR}/00.conf"
-    echo WORK_USER=${WORK_USER:-clouddata} >> "${CONFDIR}/00.conf"
-    echo WORK_GROUP=${WORK_GROUP:-clouddata} >> "${CONFDIR}/00.conf"
-    echo USER=${USER} >> "${CONFDIR}/00.conf"
-    echo PASSWORD=${PASSWORD} >> "${CONFDIR}/00.conf"
-    echo LOCALDIR=${LOCALDIR:-/data} >> "${CONFDIR}/00.conf"
-    echo URL="${URL}" >> "${CONFDIR}/00.conf"
-    echo PARAMSTRING="${PARAMSTRING:-$DEFPARAMSTRING}" >> "${CONFDIR}/00.conf"
+    echo "SERVER=\"${SERVER}\"" >> "${CONFDIR}/00.conf"
+    echo "WORK_UID=\"${WORK_UID:-82}\"" >> "${CONFDIR}/00.conf"
+    echo "WORK_GID=\"${WORK_GID:-82}\"" >> "${CONFDIR}/00.conf"
+    echo "WORK_USER=\"${WORK_USER:-clouddata}\"" >> "${CONFDIR}/00.conf"
+    echo "WORK_GROUP=\"${WORK_GROUP:-clouddata}\"" >> "${CONFDIR}/00.conf"
+    echo "USER=\"${USER}\"" >> "${CONFDIR}/00.conf"
+    echo "PASSWORD=\"${PASSWORD}\"" >> "${CONFDIR}/00.conf"
+    echo "LOCALDIR=\"${LOCALDIR:-/data}\"" >> "${CONFDIR}/00.conf"
+    echo "URL=\"${URL}\"" >> "${CONFDIR}/00.conf"
+    echo "PARAMSTRING=\"${PARAMSTRING:-$DEFPARAMSTRING}\"" >> "${CONFDIR}/00.conf"
 fi
 
 LOGDIR=${LOGDIR:-$CONFDIR}
@@ -57,7 +58,7 @@ for xconf in ${CONFDIR}/*.conf; do
 
     if test -z "$SERVER"; then
         SERVER=`echo $URL|sed "s/\// /g"|awk '{ print $2 }'`
-        echo SERVER=${SERVER} >> $cconf
+        echo "SERVER=\"${SERVER}\"" >> $cconf
     fi
 
     # check if UID already used
@@ -66,8 +67,8 @@ for xconf in ${CONFDIR}/*.conf; do
     if test "$TEST_USER" ; then
         WORK_USER=$TEST_USER
         WORK_GID=$(id -g $WORK_USER)
-        echo WORK_USER=${WORK_USER:-clouddata} >> $cconf
-        echo WORK_GID=${WORK_GID:-82} >> $cconf
+        echo "WORK_USER=\"${WORK_USER:-clouddata}\"" >> $cconf
+        echo "WORK_GID=\"${WORK_GID:-82}\"" >> $cconf
     else
         addgroup -S -g $WORK_GID $WORK_GROUP || WORK_GROUP=$(awk -F: -v g=$WORK_GID '$3==g {print $1}' /etc/group)
         adduser -u $WORK_UID -D -s /bin/sh -S -G $WORK_GROUP $WORK_USER
@@ -75,13 +76,13 @@ for xconf in ${CONFDIR}/*.conf; do
         WORK_USER=$(awk -F: -v u=$WORK_UID '$3==u {print $1}' /etc/passwd)
         WORK_GID=$(id -g $WORK_USER)
         WORK_GROUP=$(id -gn $WORK_USER)
-        echo WORK_GID=${WORK_GID:-82} >> $cconf
-        echo WORK_USER=${WORK_USER} >> $cconf
-        echo WORK_GROUP=${WORK_GROUP} >> $cconf
+        echo "WORK_GID=\"${WORK_GID:-82}\"" >> $cconf
+        echo "WORK_USER=\"${WORK_USER}\"" >> $cconf
+        echo "WORK_GROUP=\"${WORK_GROUP}\"" >> $cconf
     fi
 
     USER_HOME=$(awk -F: -v u=$WORK_UID '$3==u {print $6}' /etc/passwd)
-    echo USER_HOME=${USER_HOME} >> $cconf
+    echo "USER_HOME=\"${USER_HOME}\"" >> $cconf
 
     mkdir -p $USER_HOME
     chown $WORK_USER $USER_HOME
