@@ -20,7 +20,6 @@ if test ! "${CONFDIR}"; then
     echo WORK_GROUP=${WORK_GROUP:-clouddata} >> "${CONFDIR}/00.conf"
     echo USER=${USER} >> "${CONFDIR}/00.conf"
     echo PASSWORD=${PASSWORD} >> "${CONFDIR}/00.conf"
-    echo WORK_GROUP=clouddata >> "${CONFDIR}/00.conf"
     echo LOCALDIR=${LOCALDIR:-/data} >> "${CONFDIR}/00.conf"
     echo URL="${URL}" >> "${CONFDIR}/00.conf"
     echo PARAMSTRING="${PARAMSTRING:-$DEFPARAMSTRING}" >> "${CONFDIR}/00.conf"
@@ -117,6 +116,7 @@ do
             echo "	login $USER" >> $USER_HOME/.netrc
             echo "	password $PASSWORD" >> $USER_HOME/.netrc
         fi
+        PARAMSTRING="${PARAMSTRING:-$DEFPARAMSTRING}"
         H=""
         test "${HIDDEN}" = "yes" && H="-h"
         test -f  ${LOGDIR}/${CONF}_sync.log || touch ${LOGDIR}/${CONF}_sync.log
