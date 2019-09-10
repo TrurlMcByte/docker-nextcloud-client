@@ -101,7 +101,7 @@ for xconf in ${CONFDIR}/*.conf; do
 
     chown $WORK_UID.$WORK_GID $USER_HOME/.netrc
     chown -R $WORK_UID.$WORK_GID $USER_HOME/.local
-    chown -R $WORK_UID.$WORK_GID $LOCALDIR
+    test -z "${SKIPDATACHOWN}" && chown -R $WORK_UID.$WORK_GID $LOCALDIR
     chmod -R u+rw $LOCALDIR
 done
 STOP=""
