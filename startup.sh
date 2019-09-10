@@ -2,6 +2,7 @@
 #
 
 test "$DEBUG" = "yes" && set -x
+chmod +x /usr/bin/minio
 
 SILENT=" --silent"
 test "$VERBOSE" = "yes" && SILENT=""
