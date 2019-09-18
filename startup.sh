@@ -70,6 +70,12 @@ for xconf in ${CONFDIR}/*.conf; do
         echo "WORK_USER=\"${WORK_USER:-clouddata}\"" >> $cconf
         echo "WORK_GID=\"${WORK_GID:-82}\"" >> $cconf
     else
+        CHECK_USER=$(awk -F: -v u=$WORK_USER '$1==u {print $1}' /etc/passwd)
+        if test CHECK_USER; then
+            # user with this name exists
+            WORK_USER=cloud$CONF
+            WORK_GROUP=cloudg$CONF
+        fi
         addgroup -S -g $WORK_GID $WORK_GROUP || WORK_GROUP=$(awk -F: -v g=$WORK_GID '$3==g {print $1}' /etc/group)
         adduser -u $WORK_UID -D -s /bin/sh -S -G $WORK_GROUP $WORK_USER
         # recheck user
@@ -84,8 +90,10 @@ for xconf in ${CONFDIR}/*.conf; do
     USER_HOME=$(awk -F: -v u=$WORK_UID '$3==u {print $6}' /etc/passwd)
     echo "USER_HOME=\"${USER_HOME}\"" >> $cconf
 
-    mkdir -p $USER_HOME
-    chown $WORK_USER $USER_HOME
+    if test "${USER_HOME}"; then
+        mkdir -p "${USER_HOME}"
+        chown "${WORK_USER}" "${USER_HOME}"
+    fi
 
     if [ "$USER" -a  "$PASSWORD" ] ; then
         echo "machine $SERVER" > $USER_HOME/.netrc
