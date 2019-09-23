@@ -58,6 +58,7 @@ for xconf in ${CONFDIR}/*.conf; do
 
     if test -z "$SERVER"; then
         SERVER=`echo $URL|sed "s/\// /g"|awk '{ print $2 }'`
+        SERVER=${SERVER%:[0-9]*}
         echo "SERVER=\"${SERVER}\"" >> $cconf
     fi
 
