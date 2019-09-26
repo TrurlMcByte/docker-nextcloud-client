@@ -70,6 +70,7 @@ for xconf in ${CONFDIR}/*.conf; do
         WORK_GID=$(id -g $WORK_USER)
         echo "WORK_USER=\"${WORK_USER:-clouddata}\"" >> $cconf
         echo "WORK_GID=\"${WORK_GID:-82}\"" >> $cconf
+        usermod $WORK_USER --shell /bin/sh # nologin
     else
         CHECK_USER=$(awk -F: -v u=$WORK_USER '$1==u {print $1}' /etc/passwd)
         if test CHECK_USER; then
@@ -109,7 +110,8 @@ for xconf in ${CONFDIR}/*.conf; do
 
     chown $WORK_UID.$WORK_GID $USER_HOME/.netrc
     chown -R $WORK_UID.$WORK_GID $USER_HOME/.local
-    test -z "${SKIPDATACHOWN}" && chown -R $WORK_UID.$WORK_GID $LOCALDIR
+    # chown -R $WORK_UID.$WORK_GID $LOCALDIR
+    test -z "${SKIPDATACHOWN}" && chown -R $WORK_UID $LOCALDIR
     SKIPDATACHOWN=""
     chmod -R u+rw $LOCALDIR
 done

@@ -1,7 +1,7 @@
 FROM alpine:latest
 MAINTAINER Trurl McByte
 
-RUN apk --no-cache -U add curl nextcloud-client \
+RUN apk --no-cache -U add shadow curl nextcloud-client \
     && mkdir -p /usr/local/bin \
     && curl -o /tmp/rclone-current-linux-amd64.zip -L https://downloads.rclone.org/rclone-current-linux-amd64.zip \
     && busybox unzip -o /tmp/rclone-current-linux-amd64.zip -d /tmp \
