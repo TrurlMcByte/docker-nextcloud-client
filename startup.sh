@@ -70,7 +70,7 @@ for xconf in ${CONFDIR}/*.conf; do
         WORK_GID=$(id -g $WORK_USER)
         echo "WORK_USER=\"${WORK_USER:-clouddata}\"" >> $cconf
         echo "WORK_GID=\"${WORK_GID:-82}\"" >> $cconf
-        usermod $WORK_USER --shell /bin/sh # nologin
+        #usermod $WORK_USER --shell /bin/sh # nologin
     else
         CHECK_USER=$(awk -F: -v u=$WORK_USER '$1==u {print $1}' /etc/passwd)
         if test CHECK_USER; then
@@ -134,7 +134,7 @@ do
         test "${HIDDEN}" = "yes" && H="-h"
         test -f  ${LOGDIR}/${CONF}_sync.log || touch ${LOGDIR}/${CONF}_sync.log
         chown $WORK_USER ${LOGDIR}/${CONF}_sync.log
-        su $WORK_USER -c "/usr/bin/nextcloudcmd --non-interactive --exclude $LOCALDIR/exclude.lst $PARAMS $SILENT -n $H $LOCALDIR $URL &> ${LOGDIR}/${CONF}_sync.log"
+        su $WORK_USER -s /bin/sh -c "/usr/bin/nextcloudcmd --non-interactive --exclude $LOCALDIR/exclude.lst $PARAMS $SILENT -n $H $LOCALDIR $URL &> ${LOGDIR}/${CONF}_sync.log"
         # ToDo: search for special tools for fixing permissons
         test "$POST_SCRIPT" && test -f $LOCALDIR/$POST_SCRIPT && su $WORK_USER -c "/bin/sh $LOCALDIR/$POST_SCRIPT 2>&1 >> ${LOGDIR}/${CONF}_sync.log"
         test -z "${RUNONCE}" && sleep $INTERVAL || STOP=1
