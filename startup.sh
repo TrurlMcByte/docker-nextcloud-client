@@ -106,6 +106,10 @@ for xconf in ${CONFDIR}/*.conf; do
     mkdir -p $USER_HOME/.local
 
     mkdir -p $LOCALDIR
+
+    # probable mount (nfs) problem (Stale file handle)
+    test -d $LOCALDIR || exit
+
     test -f $LOCALDIR/exclude.lst || touch $LOCALDIR/exclude.lst
 
     chown $WORK_UID.$WORK_GID $USER_HOME/.netrc
